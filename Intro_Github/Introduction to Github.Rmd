@@ -38,33 +38,23 @@ The very first thing we are going to do in this class is clone the repository or
 
 Once you click that link you should see something that looks like this: 
 
-# Opening R for the first time
+<br><br> 
+![](our_repo.png)
 
-Many R users will seldom---if ever---use R without RStudio. Instead, most people now use R Studio as their main way of interacting with the R software. If you have successfully installed RStudio, you can click on the icon in your computer's application folder to open your first session. The figure below provides a very basic overview of what each pane or panel within R studio does.
-
+Once you see the image above, click on the green "Clone or Download" button and then choose "Open in Desktop." This should then prompt your computer to launch a dialogue to ask whether you want to launch Github Desktop (you do). If you have successfully cloned the repo, it should look something like this:
 
 <br><br> 
-![](R Studio Panes.png)
+![](github_desktop.png)
 
-At first, the multiple panes or windows of RStudio may seem a bit intimidating, so let's take a brief tour. As the picture above shows, there are four different panes. The one that appears in the top left is called the "Code Editor Window"-- this is where you type code or instructions into RStudio. The pane just below that is called the "Console"-- this is where most of the output of your code will appear. For example, in the picture above, the user has typed in 2+2 and the console is showing us the output of that code when it is run (4).
+Let's take a minute to explore the image above. First, take note of the "current repository" drop down menu in the upper left hand corner of your window. You should only see the name of our repo, unless you created your own repo or have used Github before this class. Next, you'll see a description of the "Current Branch"-- this is essentially a way of keeping track of different versions of the software. Finally, you'll see something about "pushing origin" or "fetching origin." Fetching means downloading the most reason version of the repo to your desktop, and pushing means changing the repo yourself. 
 
-The upper-left hand pane in RStudio is called the "environment" pane. Here you will see any "objects" you have created in R. Objects can mean a lot of different things. For example, you might have a dataset loaded into R that could appear there. If you have used other statistics programs before such as SPSS or Stata this may seem strange: why do I need to see the dataset I have loaded already? The answer is that R users regularly work with multiple datasets (or other types of objects) at the same time-- and indeed, this is one of the great strengths of R.
+At this point, you can ignore fetching and pushing AND committing files to our repo. For now all I want you to learn how to do is to access the files that we will edit together in class. 
 
-Finally, the lower-right hand pane has a number of different features. Mostly, you will use it to browse your "working directory," which is the folder on your computer where R will either a) save data you generate in your R session; or b) look for data that you try to read into R from your computer. This lower-right hand pane is also where you will see visualizations you make in R, and has several other features as well. For example, you can use this pane to browse R's "help" files (though I encourage you to wait to do that until you have a better understanding of how to use them).
+# Finding a file on our Repo
 
-# Typing Your First Line of Code
+When you install Github onto your computer, you are actually creating a folder on your computer. Every time you edit something in that folder, you will be slightly changing a file on the repo. This let's you work on a file on your machine and then eventually share it with others (or, benefit instantaneously from the edits of other people with whom you are working together on some code).
 
-Now that you have a very basic familiarity with R, try typing your first line of code: write 2+2 in the code editor window, then click the "run" button in the top right corner of the pane (it has a green arrow next to it). You should see the output of your code in the console, as in the picture above. 
+Take a minute and try to find the location of the Github folder on your computer. If you are on a Mac, the default location should be your "Documents" folder in your home directory. If you are on a Windows machine, the default location should be in a similar location.
 
-# Keeping An Open Mind
-
-Learning any new software language can be very challenging. It can be particularly challenging when you are learning an open-source software such as R. This is because R is not built by a company that succeeds based upon the ease in which users can use their tools, but rather a diverse, vibrant community of volunteers who try to make R easier to use. Though these volunteers are truly extraordinary and selfless-- and have made great strides towards making R easier to learn and use-- it is impossible for them to dedicate the amount of time necessary to develop full user support, or keep apace with the remarkable pace of innovation in R. 
-
-Another reason why it is hard to teach the basics of R is that there are so many different ways of doing the same thing in R. This is because different groups of people who built R over the years developed different types of solutions to common problems that people who use R face. In this course, we are going to try to streamline some of this by using something called the Tidyverse. This is a collection of people who have built "packages" (add on features to R that we will install in later tutorials) in order to make R easier to use. In fact, many of the people who support the Tidyverse are also the people who built RStudio!
-
-
-
-
-
-
+The file I would like you find and open for the next section of our class is called "Installing-R-Tutorial.html"
 
