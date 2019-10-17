@@ -60,6 +60,14 @@ the_best_tweet<-italy_politican_tweets[italy_politican_tweets$favorite_count==68
 #now lets try to find every tweet that received more than 1,000 favorites
 best_tweets<-italy_politican_tweets[italy_politican_tweets$favorite_count>1000,]
 
+#this is how we create a spreadsheet
+
+write.csv(best_tweets$text, file="Best Italian Politican Tweets.csv")
+
+#save to desktop by making the desktop our "working directory"
+setwd("~/Desktop")
+
+write.csv(best_tweets$text, file="Best Italian Politican Tweets.csv", row.names = FALSE)
 
 
 #here is a cheatsheet of many different functions in base r that are popular
