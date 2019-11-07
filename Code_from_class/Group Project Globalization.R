@@ -83,9 +83,11 @@ top_brexit_tweeters<-brexit_people[brexit_people$followers_count>100000 &
 
 top_brexit_tweeters$screen_name
 
-#install.packages("instaR")
 
-library(instaR)
+
+#NOW LET'S TRY THE OTHER SAMPLING APPROACH WHERE WE START FROM A LIST OF PEOPLE
+
+#FIRST POLITICANS
 
 test<-read.csv("http://cbail.github.io/Senators_Twitter_Data.csv")
 
@@ -96,6 +98,69 @@ sanders_tweets<-get_timeline("SenSanders", n=3199)
 sanders_tweets$text
 
 mean(sanders_tweets$favorite_count)
+
+#NOW LET'S READ IN IMDB DATA
+
+#we downloaded a .tsv file from IMDB (the movie database), to try to see if
+# it has the twitter handles of celebrities in it.
+imdbdata<-read.table(file = '~/Desktop/name.basics.tsv', 
+                     sep = '\t', 
+                     header = TRUE,
+                     fill=TRUE
+                     )
+
+names(imdbdata)
+
+head(imdbdata)
+
+#now let's try to create  a network of verified accounts
+
+leos_follows<-get_friends("@LeoDiCaprio")
+
+blerg<-lookup_users(leos_follows$user_id)
+
+verified<-blerg[blerg$verified==TRUE,]
+
+verified$description
+
+verified$location
+
+myratelimits<-rate_limit()
+
+#let's read in the file
+
+#install.packages("rvest")
+library(rvest)
+
+star_page<-read_html("http://profilerehab.com/actors_twitter_accounts")
+
+section_of_starpage<-html_node(star_page, xpath='//*[@id="entry"]')
+
+star_text<-html_text(section_of_starpage)
+
+install.packages("qdapRegex")
+library(qdapRegex)
+
+#this function extracts urls
+
+stuff<-ex_url(star_text)
+
+#install.packages("stringr")
+
+names<-gsub("www.twitter.com/","", stuff)
+
+#we need to get of these
+#\nDoes
+#\
+#\nWhere
+
+#https://stackoverflow.com/questions/27721008/how-do-i-deal-with-special-characters-like-in-my-regex
+gsub("\\\\n\","",names)
+
+
+
+
+
 
 
 
