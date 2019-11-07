@@ -154,6 +154,14 @@ names<-gsub("www.twitter.com/","", stuff)
 #\
 #\nWhere
 
+#the wonderful solution of Giovanni Maggi! Great job!
+test<-gsub("\\\\n","", names)
+test1<-gsub("\\\\nWhere","",test)
+test2<-gsub("\\\\nWhat","",test1)
+test3<-gsub("\\\\nDoes","",test2)
+test4<-gsub("\\\\n","",test3)
+
+
 #https://stackoverflow.com/questions/27721008/how-do-i-deal-with-special-characters-like-in-my-regex
 gsub("\\\\n\","",names)
 
