@@ -81,14 +81,10 @@ green_sample$screen_name
 
 
 
-
-
 #SAMPLING STRATEGY #2: BUILD A NETWORK
 
 network<-get_friends(greenfollows$user_id,
                      retryonratelimit = TRUE)
-
-
 
 
 
@@ -99,4 +95,18 @@ names(greenfollowstuff)
 # topfollows<-greenfollowstuff[greenfollowstuff$followers_count>10000,]
 # 
 # greenfollowstuff$location
+
+
+# we are now shifting back towards studying climate change and the
+#acqua alta in Italy.
+
+library(rtweet)
+acqua_alta_tweets<-search_tweets("venice flood", n=1000)
+
+
+#view text of tweets to find hashtags
+acqua_alta_tweets$text
+
+#here is our crowd-sourced hashtags: https://docs.google.com/spreadsheets/d/1_yJJtv2MCA0QrJU3Drxin7NLQHSkowQw3LTHwMtQW3Y/edit?usp=sharing
+
 
