@@ -138,7 +138,7 @@ section_of_starpage<-html_node(star_page, xpath='//*[@id="entry"]')
 
 star_text<-html_text(section_of_starpage)
 
-install.packages("qdapRegex")
+# install.packages("qdapRegex")
 library(qdapRegex)
 
 #this function extracts urls
@@ -162,8 +162,106 @@ test3<-gsub("\\\\nDoes","",test2)
 test4<-gsub("\\\\n","",test3)
 
 
+library(rtweet)
+
+
+hart_friends<-get_friends("KevinHart4real")
+
+names_hart_friends<-lookup_users(hart_friends$user_id)
+
+names_hart_friends$screen_name
+
+#construct edgelist (data structure that we use for social networks)
+
+hart_network<-cbind(hart_friends$user, names_hart_friends$screen_name)
+
+
+
+#to look up twitter ids you can use this site https://tweeterid.com/
+
+
+
+#next let's write a loop to get edgelists for multiple celebrities all at once
+
+our_celebs<-c("TheRock", "channingtatum", "KevinHart4real")
+
+celebrity_networks<-as.data.frame(NULL)
+
+for(i in 1:length(our_celebs)){
+  #first get the names of the people the celebrity follows
+  temp_network<-get_friends(our_celebs[i])
+  #then look up their screen names (twitter handles)
+  named_connections<-lookup_users(temp_network$user_id)
+  #next create an edge list for that person
+  edge_list<-cbind(temp_network$user, named_connections$screen_name)
+  #finally, bind all the edge lists together to create a single long edge list
+  #with our blank data frame above
+  celebrity_networks<-rbind(celebrity_networks, edge_list)
+  #print value of i for debugging
+  print(i)
+  #pause to avoid rate limiting
+  Sys.sleep(3)
+}
+
+#to visualize the network and analyze it we need to create a new data structure called a network
+#to do this we will use the igraph package
+
+#install.packages("igraph")
+library(igraph)
+
+#convert my edgelist to a network object
+#to do this I use a function called graph.data.frame()
+
+our_network<-graph.data.frame(celebrity_networks)
+
+#now let's try to visualize it
+plot(our_network)
+
+#wow that's ugly
+
+#to make it prettier we use ggraph
+#install.packages('ggraph')
+library(ggraph)
+
+#good tutorial on ggraph is here: https://kateto.net/sunbelt2019
+
+ggraph(our_network) +
+  geom_edge_link() +   # add edges to the plot
+  geom_node_point() 
+
+#we want to add the names of people in our network
+#but if we add everyone's name we get a mess
+
+#so, let's try to find the influential people in our small network
+#to do this we will measure each person's "network degree" 
+#degree describes the total number of social connections that
+#each person has. We can calculate degree in igraph as follows
+
+out<-as.data.frame(degree(our_network))
+
+#next, let's label only the people who have more than
+#one connection in our network
+
+#now let's insert the degree variable into our network object
+V(our_network)$degree<-degree(our_network)
+
+
+ggraph(our_network) +
+  geom_edge_link(width=.1) +   # add edges to the plot
+  geom_node_point(size=.2) +
+  geom_node_text(aes(label = name, 
+                     filter=V(our_network)$degree>1), 
+                     repel = TRUE, size=2)
+  
+
+
+
+
+# out<-strsplit(test4, "[\\\\]|[^[:print:]]",fixed=FALSE)
+# out[1]
+
 #https://stackoverflow.com/questions/27721008/how-do-i-deal-with-special-characters-like-in-my-regex
-gsub("\\\\n\","",names)
+#gsub("\\\\n\","",names)
 
 
 
