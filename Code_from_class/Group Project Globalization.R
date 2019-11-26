@@ -183,7 +183,10 @@ hart_network<-cbind(hart_friends$user, names_hart_friends$screen_name)
 
 #next let's write a loop to get edgelists for multiple celebrities all at once
 
-our_celebs<-c("TheRock", "channingtatum", "KevinHart4real")
+our_celebs<-c("TheRock", "channingtatum", 
+              "KevinHart4real", "JohnStamos",
+              "tomhanks","justdemi","LeoDiCaprio")
+
 
 celebrity_networks<-as.data.frame(NULL)
 
@@ -200,7 +203,7 @@ for(i in 1:length(our_celebs)){
   #print value of i for debugging
   print(i)
   #pause to avoid rate limiting
-  Sys.sleep(3)
+  Sys.sleep(60)
 }
 
 #to visualize the network and analyze it we need to create a new data structure called a network
@@ -255,7 +258,45 @@ ggraph(our_network) +
   
 
 
+#let's move to Gephi for easier and more intuitive visualization
 
+#Gephi requires an edgelist and a nodelist 
+
+#first let's make our edgelist
+names(celebrity_networks)<-c("Source","Target")
+names(celebrity_networks)
+
+#but now we need to make our node list
+#this needs to describe every unique person
+#who ever appears in the data
+
+name_list<-c(as.character(celebrity_networks$Source), 
+                 as.character(celebrity_networks$Target))
+
+name_list<-as.data.frame(unique(name_list))
+
+names(name_list)<-"Source"
+name_list$Label<-name_list$Source
+name_list$ID<-name_list$Source
+
+#now we need to create .csv files and then load them
+#into Gephi
+
+#we need to save it to our working directory
+
+#to find your working directory you can use this code
+getwd()
+
+#to set your working directory to a different location you can
+#use
+
+setwd("~/Desktop")
+
+write.csv(celebrity_networks, file="Edgelist.csv",
+          row.names = FALSE)
+
+write.csv(name_list, file="Nodelist.csv",
+          row.names = FALSE)
 
 # out<-strsplit(test4, "[\\\\]|[^[:print:]]",fixed=FALSE)
 # out[1]
@@ -263,6 +304,17 @@ ggraph(our_network) +
 #https://stackoverflow.com/questions/27721008/how-do-i-deal-with-special-characters-like-in-my-regex
 #gsub("\\\\n\","",names)
 
+
+
+
+#let's say we want to get the gender of people in our network
+
+#install.packages("gender")
+library(gender)
+
+#install.packages("genderdata", repos = "http://packages.ropensci.org", type = "source")
+
+gender("Chris")
 
 
 

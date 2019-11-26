@@ -197,21 +197,160 @@ summary(our_model)
 retweetcount= neg_tweet+ followers + error
 
 
+#to save your data 
+
+save(nameoffile, file="Sarah Data.Rdata")
+
+#to find the location of the data check your working
+#directory
+
+getwd()
+
+#if you want to set the location of your directory
+
+setwd("~/Desktop")
+
+#read in files from each student
+load("/Users/christopherandrewbail/Desktop/Sarah Data.Rdata")  
+
+#because both Sarah and Emma used the same name for hte data we 
+#have to rename it
+sarah_tweets<-english_tweets
+
+load("/Users/christopherandrewbail/Desktop/Emma's Data.Rdata")
+
+emma_tweets<-english_tweets
+
+load("/Users/christopherandrewbail/Desktop/Jacopo's tweet.Rdata")
+
+jacopo_data<-acqua_alta_data
+
+load("/Users/christopherandrewbail/Desktop/ruggseadata.Rdata")
+
+ruggero_data<-acqua_alta_data
+
+load("/Users/christopherandrewbail/Desktop/Gio's english tweets.Rdata")
+
+gio_tweets<-english_tweets
+
+load("/Users/christopherandrewbail/Desktop/Francesca Data.RData")
+
+francesca_tweets<-acqua_alta_data
+
+emma_tweets$sentiment<-NULL
+sarah_tweets$sentiment<-NULL
+gio_tweets$sentiment<-NULL
+emma_tweets$neg_tweet<-NULL
+sarah_tweets$neg_tweet<-NULL
+gio_tweets$neg_tweet<-NULL
+
+#this is how we combine the datasets using the rbind function
+all_the_tweets<-rbind(emma_tweets, 
+                      sarah_tweets,
+                      jacopo_data,
+                      ruggero_data,
+                      gio_tweets,
+                      francesca_tweets
+                      )
+
+#we can de-duplicate the dataset using the "unique" function
+
+non_duplicate_tweets<-unique(all_the_tweets)
+
+save(non_duplicate_tweets, file="All Tweets.Rdata")
+
+#now let's try using the NRC sentiment analysis method
+
+library(syuzhet)
+non_duplicate_tweets$sentiment<-get_sentiment(non_duplicate_tweets$text,
+                                              method="nrc")
+
+#lets take a look
+head(non_duplicate_tweets$sentiment)
+
+hist(non_duplicate_tweets$sentiment)
 
 
 
+library(ggplot2)
+
+ggplot(non_duplicate_tweets, aes(x=sentiment, y=retweet_count))+
+  geom_point()+
+  geom_smooth()+
+  theme_minimal()+
+  ylim(0,5000)
 
 
+#let's create a variable that describes whether there is significant negative
+#tone to each tweet
+
+non_duplicate_tweets$neg_tweet<-0
+non_duplicate_tweets$neg_tweet[non_duplicate_tweets$sentiment<0]<-1
+
+table(non_duplicate_tweets$neg_tweet)
+
+non_duplicate_tweets$followers_count[1]
+
+our_model<-lm(retweet_count~
+                neg_tweet +
+                followers_count,
+              data=non_duplicate_tweets
+)
+
+summary(our_model)
+
+table(non_duplicate_tweets$lang)
+
+?get_sentiment()
+
+#now we found out that lots of tweets aren't
+#being analyzed if they are in non-romance languages
 
 
+#let's limit our analysis to english or italian
 
 
+language<-english_data
+
+english_data<-non_duplicate_tweets[non_duplicate_tweets$lang=="en",]
+
+italian_data<-non_duplicate_tweets[non_duplicate_tweets$lang=="it",]
 
 
+#rerun the sentiment analysis specifying the language
+
+english_data$sentiment<-get_sentiment(english_data$text,
+                                      method="nrc",
+                                      language="english")
+
+italian_data$sentiment<-get_sentiment(italian_data$text,
+                                      method="nrc",
+                                      language="italian")
 
 
+english_data$neg_tweet<-0
+english_data$neg_tweet[english_data$sentiment< -1]<-1
+
+table(english_data$neg_tweet)
+
+negative_tweets<-english_data[english_data$neg_tweet==1,]
+head(negative_tweets$text, 10)
 
 
+ggplot(english_data, aes(x=sentiment, y=retweet_count))+
+  geom_point()+
+  geom_smooth()+
+  theme_minimal()+
+  ylim(0,5000)
+
+
+our_model<-lm(retweet_count~
+                neg_tweet +
+                followers_count,
+              data=english_data
+)
+
+summary(our_model)
 
 
 
