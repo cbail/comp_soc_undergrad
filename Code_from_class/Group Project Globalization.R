@@ -446,15 +446,56 @@ head(descriptions$description)
 
 accounts_to_delete<-c("business","organization")
 
-if (!require("pacman")) install.packages("pacman")
-pacman::p_load_gh("trinker/entity")
+# if (!require("pacman")) install.packages("pacman")
+# pacman::p_load_gh("trinker/entity")
+# 
+# library(entity)
+# location_entity(descriptions$description[1])
+# 
+# Los Angeles
+# United States
+# LA
 
-library(entity)
-location_entity(descriptions$description[1])
+#we ran into a java issue that we don't have time to fix in class
 
-Los Angeles
-United States
-LA
+#install.packages("tidytext")
+library(tidytext)
+library(dplyr)
+
+#identify all unique words in our twitter descriptions
+all_the_words<- descriptions %>%
+  select(description) %>%
+  unnest_tokens("word", description)
+
+
+#now lets count the top words
+final_word_list<-all_the_words %>%
+  count(word) %>%
+  arrange(desc(n))
+
+#stop words are common prepositions or articles such as "the" "and" "or"
+#we often to remove them when we do natural language processing because they 
+#don't help us identify patterns
+
+data("stop_words")
+no_stop_words<-all_the_words %>%
+  anti_join(stop_words)
+
+final_word_list<-no_stop_words %>%
+  count(word) %>%
+  arrange(desc(n))
+
+#now we have some candidate words for identifying patterns  in
+#our data using a dictionary-based approach. A dictionary-based
+#approach means we come up with a list of words and then count
+#the number of times they appear in our dataset
+
+#let's create a dictionary for comedians
+#install.packages("stringr")
+library(stringr)
+
+words_to_define_sample<-c("comedian","comedy")
+comedians<-descriptions[str_detect(descriptions$description, words_to_define_sample),]
 
 
 
