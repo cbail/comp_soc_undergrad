@@ -193,14 +193,18 @@ celebrity_networks<-as.data.frame(NULL)
 for(i in 1:length(our_celebs)){
   #first get the names of the people the celebrity follows
   temp_network<-get_friends(our_celebs[i])
-  #then look up their screen names (twitter handles)
-  named_connections<-lookup_users(temp_network$user_id)
-  #next create an edge list for that person
-  edge_list<-cbind(temp_network$user, named_connections$screen_name)
-  #finally, bind all the edge lists together to create a single long edge list
-  #with our blank data frame above
-  celebrity_networks<-rbind(celebrity_networks, edge_list)
-  #print value of i for debugging
+  
+    if(nrow(temp_network)>0){
+      #then look up their screen names (twitter handles)
+      named_connections<-lookup_users(temp_network$user_id)
+      #next create an edge list for that person
+      edge_list<-cbind(temp_network$user, named_connections$screen_name)
+      #finally, bind all the edge lists together to create a single long edge list
+      #with our blank data frame above
+      celebrity_networks<-rbind(celebrity_networks, edge_list)
+      #print value of i for debugging
+    }
+  
   print(i)
   #pause to avoid rate limiting
   Sys.sleep(60)
@@ -317,7 +321,140 @@ library(gender)
 gender("Chris")
 
 
+#example of an "if" loop
 
+for (i in 1:5){
+  if (i>3){
+  print(i)
+  }
+}
+
+#this is an if/else loop
+for (i in 1:5){
+  if (i>3){
+    print(i)
+  }else{
+    print("awesome")  
+  }
+}
+
+#while loop looks like this
+for (i in 1:5){
+  while(i>3){
+  print(i)
+  }
+}
+
+
+#now let's read in the data created by Alessio
+
+finaledges<-read.csv("~/Desktop/celebrities.csv",
+         header=TRUE,
+         stringsAsFactors = FALSE
+        )
+
+library(igraph)
+
+celeb_network<-graph.data.frame(finaledges)
+
+V(celeb_network)$name
+head(E(celeb_network))
+
+V(celeb_network)$degree<-degree(celeb_network)
+
+# remove isolates
+total_losers <- V(celeb_network)[degree(celeb_network)<2]
+pruned <- delete.vertices(celeb_network, total_losers)
+
+length(V(celeb_network))
+length(V(pruned))
+
+pruned_data<-get.data.frame(pruned)
+
+names(pruned_data)<-c("Source","Target")
+
+pruned_data<-unique(pruned_data)
+
+setwd("~/Desktop")
+write.csv(pruned_data, file="New Edgelist.csv", row.names = FALSE)
+
+#now let's remake the nodelist
+
+nodes<-c(pruned_data$Source, pruned_data$Target)
+nodes<-data.frame(unique(nodes))
+names(nodes)<-"Source"
+nodes$ID<-nodes$Source
+nodes$Label<-nodes$Source
+nodes$Source<-NULL
+
+write.csv(nodes, file="New Nodelist.csv", row.names=FALSE)
+
+#let's add in politicians in the list
+
+
+my_politicians<-c(
+                  #first congresspeople
+                  "JoeLieberman","BachusAL06","RepRonPaul","Robert_Aderholt",
+                  "JudgeTedPoe","SenBobCorker","VoteMarsha","RepAdamSmith","RepMikeQuigley",
+                  "BillCassidy","BilbrayCa50","DrPhilRoe","RepMcClintock","Jim_Moran","RepJimMatheson",
+                  "GabbyGiffords","SenSherrodBrown","DeanHeller","eltongallegly24","RepJoeBaca",
+                  "USRepMikeDoyle","RepGoodlatte","repdonyoung","RepMaxineWaters","JackKingston",
+                  "RandyNeugebauer","RepMikeRogersAL","RepBrianHiggins","DrPhilGingrey","repgregwalden",
+                  "FrankPallone","jahimes","SenSanders","SenJeffMerkley","HarryEMitchell","PatrickMcHenry",
+                  "RepWalterJones","johnthune","RepGusBilirakis","congbillposey","RepHankJohnson",
+                  "PeteSessions","RepKenMarchant","TomRooney","aaronschock","GreggHarper","ConnieMackIV",
+                  "CynthiaLummis","RepGregoryMeeks","DarrellIssa","LeaderHoyer","JimOberstar","JudyBiggert",
+                  "SenMarkey","USRepSullivan","cbrangel","RoyBlunt","SenatorBurr","SteveAustria","RepPerlmutter",
+                  "RepSchrader","VernBuchanan","AnderCrenshaw","RepMaryFallin","RepCliffStearns","SenArlenSpecter",
+                  "PeterRoskam","RepSteveIsrael","RepJoeBarton","RepKevinBrady","MikeHMichaud","LeonardBoswell",
+                  "SenatorCollins","ArthurDavis","MaryBonoUSA","RepMikeCoffman","SenJohnMcCain","repbenraylujan",
+                  "DanaRohrabacher","RepBarrett","DavidVitter","CongressmanGT","SpeakerRyan","zachwamp",
+                  "mlfudge","PaulBrounMD","JeffFortenberry","RepSires","SenatorMenendez","JerryMoran","LEETERRYNE",
+                  "RepPeteKing","MicheleBachmann","Jim_Jordan","lisamurkowski","JudgeCarter","cathymcmorris",
+                  "jasoninthehouse","ErikPaulsen","SenatorReid","russfeingold","bobinglis","RepMikeHonda",
+                  "SenChrisDodd","virginiafoxx","clairecmc","JeffFlake","GovPenceIN","repblumenauer",
+                  "BarbaraBoxer","GlennNye","LamarSmithTX21","michaelcburgess","JohnEnsign","petehoekstra",
+                  "RepShimkus","kevinomccarthy","boblatta","jaredpolis","RobWittman","CandiceMiller","Randy_Forbes",
+                  "CongJoeWilson","Dennis_Kucinich","JohnKerry","chelliepingree","johnculberson","tomperriello",
+                  "RosLehtinene","keithellison","RepTimRyan","JohnCornyn","PeteOlson","RogerWicker","ChuckGrassley",
+                  "neilabercrombie","JimDeMint","ThadMcCotter","MarkUdall","SpeakerBoehner","MarkWarner",
+                  "askgeorge","RepTomPrice","TeamCantor","JohnBoozman",
+                  #now presidents
+                  "realDonaldTrump","BarackObama","BillClinton"
+                  )
+
+
+nodes$politician<-0
+nodes$politician[nodes$ID %in% my_politicians]<-1
+
+table(nodes$politician)
+
+write.csv(nodes, file="New Nodelist.csv", row.names=FALSE)
+
+#we are trying to eliminate irrelevant accounts from our data
+#let's try to do this with some text analysis of the "descriptions:"
+#of each person on Twitter
+
+
+library(rtweet)
+
+tenusers<-lookup_users(as.character(nodes$ID[1:10]))
+
+descriptions<-lookup_users(as.character(nodes$ID))
+
+head(descriptions$description)
+
+accounts_to_delete<-c("business","organization")
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load_gh("trinker/entity")
+
+library(entity)
+location_entity(descriptions$description[1])
+
+Los Angeles
+United States
+LA
 
 
 
