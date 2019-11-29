@@ -343,14 +343,84 @@ ggplot(english_data, aes(x=sentiment, y=retweet_count))+
   theme_minimal()+
   ylim(0,5000)
 
+#create and indicator of visual data
+
+english_data$av<-0
+english_data$av[!is.na(english_data$media_type)]<-1
+
+#standardize the coefficients
+english_data$followers_standardized<-scale(english_data$followers_count)
+
+
+
 
 our_model<-lm(retweet_count~
                 neg_tweet +
+                av +
                 followers_count,
               data=english_data
 )
 
 summary(our_model)
+
+#install.packages("coefplot")
+library(coefplot)
+
+coefplot(our_model, intercept=FALSE)+
+  theme_minimal()
+
+
+#make list of top hashtags
+
+non_duplicate_tweets$text[1]
+
+
+library(stringi)
+counts_of_hashtags<-as.data.frame(NULL)
+
+for (i in 1:nrow(hashtags)){
+ temp<-non_duplicate_tweets[str_detect(non_duplicate_tweets$text, hashtags$Acqua.ALta.Hashtags[i]),]
+ row<-as.data.frame(cbind(hashtags$Acqua.ALta.Hashtags[i], nrow(temp)))
+ names(row)<-c("Hashtag","Count")
+ counts_of_hashtags<-data.frame(rbind(counts_of_hashtags, row))
+ print(i)
+}
+
+#change factor variables into numeric variables
+
+counts_of_hashtags$Hashtag<-as.character(counts_of_hashtags$Hashtag)
+counts_of_hashtags$Count<-as.numeric(as.character(counts_of_hashtags$Count))
+
+hashtag_count<-ggplot(counts_of_hashtags, aes(x=Hashtag, y=Count))+
+  geom_bar(stat="identity")+
+  theme_minimal()+
+  #theme(axis.text.x = element_text(angle = 90))+
+  xlab("")+
+  ylab("Number of Mentions in the Data")+
+  coord_flip()
+
+setwd("~/Desktop")
+ggsave(hashtag_count, file="hashtag count.png", width=12, height=8, dpi=200)
+
+
+
+english_data$time<-as.Date(english_datas$created_at, format="%Y-%m-%d %x")
+
+library(dplyr)
+plotting_data<-
+  english_data %>%
+  group_by(time) %>%
+    summarise(feeling=mean(sentiment))
+
+library(ggplot2)
+
+ggplot(plotting_data, aes(x=time, y=feeling))+
+  geom_line(colour="blue")+
+  theme_minimal()+
+  xlab("Date")+
+  ylab("Average Sentiment (Higher Values=Positive Sentiment)")
+
+length(table(non_duplicate_tweets$lang))
 
 
 

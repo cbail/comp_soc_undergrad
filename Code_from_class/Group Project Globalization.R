@@ -497,7 +497,9 @@ library(stringr)
 words_to_define_sample<-c("comedian","comedy")
 comedians<-descriptions[str_detect(descriptions$description, words_to_define_sample),]
 
-
+nodes$comedian<-0
+nodes$comedian[nodes$ID %in% comedians$screen_name]<-1
+table(nodes$comedian)
 
 
 
