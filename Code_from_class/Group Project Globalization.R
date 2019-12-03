@@ -502,4 +502,41 @@ nodes$comedian[nodes$ID %in% comedians$screen_name]<-1
 table(nodes$comedian)
 
 
+#We came up with the idea of looking at the direction of influence
+#between celebrities and politicians. To do this we need to
+#get the tweets of everyone in the sample
+
+library(rtweet)
+trump_tweets<-get_timeline("realdonaldtrump", n=100)
+
+celebrities<-c("@therock","@channingtatum")
+
+politicans<-nodes[nodes$politician==1]
+nonpoliticians<-nodes[nodes$politician==0]
+
+#store count of retweets by people from other group
+dataholder<-as.data.frame(NULL)
+#store tweets
+tweetholder<-as.data.frame(NULL)
+
+for (i in 1:nrow(nodes)){
+  user1<-get_timeline(nodes$screen_name[i], n=300)
+  if(user1$politician==1){
+    counter<-nrow(user1[user1$retweet_name %in% nonpoliticans,])
+  }
+  if(user1$politician==0){
+    counter<-nrow(user1[user1$retweet_name %in% politicans,])
+  }
+  row<-as.data.frame(c(user1$screen_name[i], counter))
+  dataholder<-rbind(dataholder, row)
+  #now store tweets
+  tweetholder<-rbind(tweetholderm, user1)
+  Sys.sleep (20)
+  print(i)
+}
+
+count<-nrow(trump_tweets[trump_tweets$retweet_name %in% celebrities,])
+
+count
+
 
