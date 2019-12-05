@@ -537,6 +537,88 @@ for (i in 1:nrow(nodes)){
 
 count<-nrow(trump_tweets[trump_tweets$retweet_name %in% celebrities,])
 
-count
+
+#now I am reading in data that you all collected
+# load("/Users/christopherandrewbail/Desktop/tweetholder_501to603.Rdata")
+load("/Users/christopherandrewbail/Desktop/lauras_data.Rdata")
+load("/Users/christopherandrewbail/Desktop/lauras_data2.Rdata")
+
+subsetted<-senators_timelines[,c("screen_name","text","retweet_count","mentions_screen_name","retweet_screen_name")]
+new_allusers_timelines<-rbind(new_allusers_timelines, subsetted)
+
+# finaldata<-rbind(senators_timelines new_allusers_timelines)
+
+gen_info<-read.csv("~/Desktop/general_info.csv",
+                   stringsAsFactors = FALSE)
+
+new_allusers_timelines$screen_name<-tolower(new_allusers_timelines$screen_name)
+gen_info$screen_name<-tolower(gen_info$screen_name)
+new_allusers_timelines$retweet_screen_name<-tolower(new_allusers_timelines$retweet_screen_name)
+
+library(dplyr)
+merged_data<-left_join(new_allusers_timelines, gen_info)
+
+
+#first let's created a list of politicans
+politicians<-gen_info[gen_info$politician==1,]
+politician_names<-politicians$screen_name
+
+celebrities<-gen_info[gen_info$politician==0,]
+celebrities<-celebrities$screen_name
+
+
+merged_data$retweet_politician<-0
+merged_data$retweet_politician[merged_data$retweet_screen_name %in% politicians]<-1
+
+merged_data$retweet_celebrity<-0
+merged_data$retweet_celebrity[merged_data$retweet_screen_name %in% celebrities]<-1
+
+
+library(dplyr)
+
+sorted<-merged_data %>%
+  group_by(screen_name)%>%
+    summarise(count=mean(retweet_celebrity))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+merged_data$key_outcome<-0
+
+for(i in 1:nrow(merged_data)){
+  if(merged_data$politician[i]==0){
+  test<-merged_data$retweet_screen_name[i] %in% politician_names  
+    if(test=TRUE){
+      merged_data$key_outcome[i]<-1
+    }
+  }
+  
+  if(merged_data$politician[i]==1){
+    test<-merged_data$retweet_screen_name[i] %in% celebrities
+    if(test=TRUE){
+      merged_data$key_outcome[i]<-1
+    }
+  }
+print(i)
+}
+
+
+
+
+newdata<-unique(new_allusers_timelines)
+
+
+
+
 
 

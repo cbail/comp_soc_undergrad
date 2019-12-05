@@ -1,0 +1,38 @@
+---
+title: "Our Class Project Globalization"
+author: "THE Original Giovanni (plus friends)"
+date: "Venice International University"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## CELEBRITY NETWORKS
+
+![Dreamy Channing Tatum](channing.jpg)
+
+WHAT ARE STUDYING WHY? 
+
+Blah blah blah
+
+## DATA COLLECTION
+
+Blah blah blah
+
+## HOW DID WE COLLECT DATA, AND WHY?
+
+Blah blah blah
+
+## VIEWING THE DATA
+
+Blah blah blah
+
+## HOW MANY CELEBRITIES ARE THERE?
+
+```{r, echo=FALSE}
+
+```
+
+
